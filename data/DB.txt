@@ -1,0 +1,64 @@
+
+DROP TABLE IF EXISTS reservations;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS rooms;
+DROP TABLE IF EXISTS times;
+
+-- user
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(15) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL DEFAULT '1111', -- *
+    role VARCHAR(20) NOT NULL DEFAULT 'user'
+);
+
+-- room
+CREATE TABLE rooms (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    number INT NOT NULL UNIQUE
+);
+
+INSERT INTO rooms (number) VALUES
+(2),
+(3),
+(4),
+(5),
+(6),
+(8),
+(9),
+(10),
+(11);
+
+-- time
+CREATE TABLE times (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    time TIME NOT NULL UNIQUE
+);
+
+INSERT INTO times (time) VALUES
+('10:00:00'),
+('16:00:00');
+
+-- reservation
+CREATE TABLE reservations (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    room_id INT,
+    start_date DATE NOT NULL,
+    start_time_id INT,
+    end_date DATE NOT NULL,
+    end_time_id INT,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (room_id) REFERENCES rooms(id),
+    FOREIGN KEY (start_time_id) REFERENCES times(id),
+    FOREIGN KEY (end_time_id) REFERENCES times(id)
+);
+
+INSERT INTO users(name,phone,password,role) VALUES ('Yamamoto','00000000000','0000','admin');
+INSERT INTO reservations(user_id, room_id, start_date, start_time_id, end_date, end_time_id) 
+    VALUES (
+        1, 1, '2025-05-20', 1, '2025-05-23', 1
+    );
+
+SELECT * FROM reservations WHERE end_date >= '2025-05-01' AND start_date <= '2025-05-31';

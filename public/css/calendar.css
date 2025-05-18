@@ -1,0 +1,182 @@
+.hidden-label {
+    position: absolute;
+    left: -9999px;
+}
+
+.calendar-container {
+    padding: 0;
+    max-width: 990px;
+    margin: 0 auto;
+    width: fit-content;
+}
+
+.calendar-header {
+    position: relative;
+    display : flex;
+    padding: 8px;
+    height: fit-content;
+}
+
+.controls {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.mode-select {
+    margin-left: auto;
+}
+.mode-select select {
+    padding: 4px;
+}
+
+/* #calendar-viewer {
+} */
+
+#month-viewer-container {
+    display: block;
+}
+
+#month-viewer-container.hidden {
+    display: none;
+}
+
+.calendar-month table{
+    border-collapse: collapse;
+}
+
+.calendar-month th, #calendar-month td {
+    border: 1px solid #000;
+    width: 8rem;
+    height: fit-content;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.calendar-month .day-head {
+    height: 2rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    box-sizing: border-box;
+}
+.calendar-month .day-body {
+    height: 3.5rem;
+    line-height: 2.25rem;
+    font-size: 14px;
+    color: green;
+    box-sizing: border-box;
+}
+.day-body a {
+    color: red;
+}
+.day-body a:visited,
+.day-body a:hover,
+.day-body a:active,
+.day-body a:focus {
+    color: red;
+}
+
+#week-viewer-container {
+    display: block;
+}
+
+#week-viewer-container.hidden {
+    display: none;
+}
+
+.calendar-week {
+    overflow: auto;
+    border: 1px solid black;
+}
+
+.calendar-week table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse:separate;
+    border-spacing:0;
+}
+
+/*全セル*/
+.calendar-week th, #calendar-week td{
+    position: relative;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    width: 10rem;
+    height: 3rem;
+    white-space: nowrap;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/*1列目*/
+.calendar-week tr th:first-of-type {
+    border-left: 1px solid black;
+    position: sticky;
+    left: 0;
+    background-color: white;
+    z-index: 9;
+}
+
+/*１行目*/
+.calendar-week tr:first-of-type th{
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 9;
+}
+
+/*左上*/
+.calendar-week tr:first-of-type th:first-of-type {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    background-color: white;
+}
+
+/*予約されたセル*/
+.calendar-week td[data-isVacancy="true"] {
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: green;
+}
+
+.calendar-week td[data-isVacancy="false"] {
+    color: red;
+}
+
+.calendar-week td[data-isVacancy="true"]:hover{
+    background-color: #eee;
+}
+
+.reservation-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: floralwhite;
+    z-index: 5;
+    color: orange;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sun { color: red; }
+.sat { color: blue; }
+.mute { color: #aaa; }
+
+.btn {
+    font-size: 1rem;
+    color: #111;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 6px;
+}
+.btn:hover {
+    background-color: #eee;   
+}
+.btn:focus {
+    outline: none;
+}
