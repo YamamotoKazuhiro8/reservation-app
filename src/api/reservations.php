@@ -8,11 +8,11 @@
 
     $inputData = file_get_contents('php://input');
     $data = json_decode($inputData, true);
-    $startDate = $data['startDate'];
-    $endDate = $data['endDate'];
+    $startDate = $data['start_date'];
+    $endDate = $data['end_date'];
 
-    $startDate = '2025-05-01';
-    $endDate = '2025-05-30';
+    // $startDate = '2025-05-01';
+    // $endDate = '2025-05-30';
 
     try {
         // SQLクエリの準備

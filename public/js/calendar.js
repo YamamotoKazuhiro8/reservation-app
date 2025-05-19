@@ -1,11 +1,16 @@
 
+// 注意:
+// 保留: createMonthCalendarHTML()が毎回同じHTMLを返すが、reload時に破棄せず、tdの中身だけ破棄した方が早いか
+// 次　: 予約データの前処理、ラベル化、カレンダーに反映
+// 次　: ラベルを貼り付けて伸ばす
+// 次他: エラーぺージの表示
 
 class Config {
     static numRooms = 9; // 部屋数
     static rooms = [2, 3, 4, 5, 6, 8, 9, 10, 11]; // 部屋番号
     static startDate = new Date('2025-07-15')
     static endDate   = new Date('2025-09-15');
-    static year(){ this.startDate.getFullYear() };
+    static year(){ return this.startDate.getFullYear() };
 }
 
 // 日付処理
@@ -189,7 +194,11 @@ async function reload(){
         // ラベルをカレンダーに適用
 
         // 描画するカレンダーの選択
+
+        // (test)最初の月を表示
+        // document.getElementById(`m-${Config.year()}-8`).classList.remove('hidden');
     } catch(error) {
+        console.error('データ取得エラー'+error.message);
         // エラー画面の表示
         renderReservationFetchError();
         // 接続エラー
@@ -237,7 +246,7 @@ function renderReservationFetchError() {
 
 function clearCalendar() {
     Elements.clear(); // DOMのクリア
-    users.clear();    // ユーザーデータのクリア
+    users.length = 0;    // ユーザーデータのクリア
 }
 
 function showMonthCalendar(month){}
@@ -256,6 +265,7 @@ function createMonthCalendarHTML(){
     for(let month = firstMonth; month <= lastMonth; month++){ // 予約期間内の全ての月
         html += createMonthTableHTML(Config.year(), month, `${Config.year()}-${month + 1}`)
     }
+    console.log(html);
     return html;
 }
 /**
@@ -265,10 +275,12 @@ function createMonthTableHTML(year, month , yy_mm){
     const tdDefaultHTML = '読み込み中';
     
     const id = `m-${yy_mm}`; // id="m-2025-08"等
-    let html = `<div id="${id}" class="calendar-month hidden">`;
+
+    let html = `<div id="${id}" class="calendar-month">`;
+
     html += '<table><thead><tr>';
     for (let i = 0; i < 7; i++) {
-        html += `<th class="day-head${i === 0 ? ' sun' : i === 6 ? ' sat' : ''}">${DateUtils.weekdays(i)}</th>`;
+        html += `<th class="day-head${i === 0 ? ' sun' : i === 6 ? ' sat' : ''}">${DateUtils.weekdays[i]}</th>`;
     }
     html += '</tr></thead><tbody>';
 
@@ -304,6 +316,7 @@ function createMonthTableHTML(year, month , yy_mm){
     }
     html += '</tbody></table>';
     html += '</div>';
+    return html;
 }
 
 /*週カレンダーの作成*/
@@ -315,18 +328,18 @@ function createWeekCalendarHTML(){
 
     html += '<th></th>'; // 1行1列目
     // 1行目ヘッダーの作成
-    for(let day = new Date(Config.firstDate()); day <= Config.lastDate(); day.setDate(day.getDate()+1)){
+    for(let day = new Date(Config.startDate); day <= Config.endDate; day.setDate(day.getDate()+1)){
         const id = `w-${day.getFullYear()}-${day.getMonth()+1}-${day.getDate()}`; // id="w-2025-07-02" 等
-        const weekDays = DateUtils.weekdays(day.getDay());
+        const weekDays = DateUtils.weekdays[day.getDay()];
         html += `<th id="${id}"><div class="dayOfWeek">${weekDays}</div><div class="day">${day.getDate()}</div></th>`;
     }
     html += '</tr>';
 
     // 部屋セル
-    for(let room = 0; room < config.numRooms; room++){
+    for(let room = 0; room < Config.numRooms; room++){
         html += '<tr>';
-        html += `<th>${config.rooms[room]}</th>`; // 部屋番号
-        for(let day = new Date(Config.firstDate()); day <= Config.lastDate(); day.setDate(day.getDate()+1)){
+        html += `<th>${Config.rooms[room]}</th>`; // 部屋番号
+        for(let day = new Date(Config.startDate); day <= Config.endDate; day.setDate(day.getDate()+1)){
             const id = `w-${day.getFullYear()}-${day.getMonth()+1}-${day.getDate()}-${room}-2`; // id="w-2025-07-02-3-2" 等
             html += `<td id="${id}">${tdDefaultHTML}</td>`;
         }

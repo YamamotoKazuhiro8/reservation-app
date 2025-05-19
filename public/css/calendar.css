@@ -45,7 +45,7 @@
     border-collapse: collapse;
 }
 
-.calendar-month th, #calendar-month td {
+.calendar-month th, .calendar-month td {
     border: 1px solid #000;
     width: 8rem;
     height: fit-content;
@@ -97,7 +97,7 @@
 }
 
 /*全セル*/
-.calendar-week th, #calendar-week td{
+.calendar-week th, .calendar-week td{
     position: relative;
     border-right: 1px solid black;
     border-bottom: 1px solid black;
