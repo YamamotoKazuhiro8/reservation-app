@@ -35,46 +35,86 @@
 
 #month-viewer-container {
     display: block;
+    /*widthはデバイスによる*/
+    /*子要素を均等サイズで配置*/
+    width: 800px;
+    margin: auto;
 }
 
 #month-viewer-container.hidden {
     display: none;
 }
 
-.calendar-month table{
+/**/
+.calendar-month {
+    margin-bottom: 2rem;
+}
+
+.calendar-month table {
+    width: 100%;
     border-collapse: collapse;
 }
 
-.calendar-month th, .calendar-month td {
-    border: 1px solid #000;
-    width: 8rem;
-    height: fit-content;
+/*月カレンダーのタイトルラベル [８月]*/
+.calendar-month > div.title {
     text-align: center;
-    box-sizing: border-box;
 }
 
-.calendar-month .day-head {
-    height: 2rem;
-    font-size: 0.8rem;
-    font-weight: bold;
-    box-sizing: border-box;
+/*曜日列*/
+.calendar-month tr:first-of-type {
 }
-.calendar-month .day-body {
-    height: 3.5rem;
-    line-height: 2.25rem;
-    font-size: 14px;
+
+/*曜日セル*/
+.calendar-month tr:first-of-type th {
+    text-align: center;
+    padding: 0.2rem auto;
+    border: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
+}
+
+/*infoセル*/
+.calendar-month tr:nth-child(2n) td {
+    border-right: 1px solid #aaa;
+    border-left: 1px solid #aaa;
+}
+
+/*labelセル*/
+.calendar-month tr:nth-child(2n+1) td {
+    border-right: 1px solid #aaa;
+    border-left: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
+}
+
+/*日付*/
+.calendar-month td > div.head {
+    padding: 0.1rem 0;
+    text-align: center;
+}
+
+/*日情報*/
+.calendar-month td > div.info {
+    padding: 0.4rem 0;
+    text-align: center;
+    font-size: 12px;
+    color: red;
+}
+
+/*予約可能日*/
+.calendar-month td > div.info.available {
+    text-decoration: underline;
     color: green;
-    box-sizing: border-box;
+    cursor: pointer;
 }
-.day-body a {
-    color: red;
+
+/*日を、跨ぐラベル欄*/
+.calendar-month td.label {
+    height: 0;
+    border-bottom: 1px solid black;
 }
-.day-body a:visited,
-.day-body a:hover,
-.day-body a:active,
-.day-body a:focus {
-    color: red;
-}
+
+
+
+
 
 #week-viewer-container {
     display: block;
@@ -167,12 +207,20 @@
 .sat { color: blue; }
 .mute { color: #aaa; }
 
+/* .controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: red;
+} */
+
 .btn {
     font-size: 1rem;
     color: #111;
     background-color: white;
     border: 1px solid black;
     border-radius: 6px;
+    /* white-space: nowrap; */
 }
 .btn:hover {
     background-color: #eee;   

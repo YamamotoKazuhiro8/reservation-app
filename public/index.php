@@ -20,7 +20,6 @@
     <script>
         window.appConfig = {
             isLogin: <?= json_encode($isLogin) ?>,
-            userId: <?= json_encode($userId) ?>,
             isAdmin: <?= json_encode($isAdmin) ?>
         };
     </script>
@@ -95,11 +94,11 @@
     <div class="calendar-container">
         <!--カレンダーのヘッダー-->
         <div class="calendar-header">
-            <div class="controls">
+            <!-- <div class="controls">
                 <button id="prevBtn" class="btn">←</button>
                 <span id="calendar-title"></span>
                 <button id="nextBtn" class="btn">→</button>
-            </div>
+            </div> -->
 
             <div class="mode-select">
                 <label for="modeSelect" class="hidden-label">モード：</label>
@@ -112,7 +111,7 @@
 
         <div class="calendar-viewer">
             <div id="month-viewer-container"></div>
-            <div id="week-viewer-container hidden"></div>
+            <div id="week-viewer-container" class="hidden"></div>
             <div id="error-viewer"></div>
         </div>
     </div>
