@@ -91,29 +91,8 @@
     </div>
 
     <!--カレンダー表示-->
-    <div class="calendar-container">
-        <!--カレンダーのヘッダー-->
-        <div class="calendar-header">
-            <!-- <div class="controls">
-                <button id="prevBtn" class="btn">←</button>
-                <span id="calendar-title"></span>
-                <button id="nextBtn" class="btn">→</button>
-            </div> -->
-
-            <div class="mode-select">
-                <label for="modeSelect" class="hidden-label">モード：</label>
-                <select id="modeSelect" class="btn">
-                    <option value="month" selected>月</option>
-                    <option value="week">週</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="calendar-viewer">
-            <div id="month-viewer-container"></div>
-            <div id="week-viewer-container" class="hidden"></div>
-            <div id="error-viewer"></div>
-        </div>
+    <div class="calendar-container"> <!--カレンダーを置くぺージのWindow-->
+        <?php include 'calendar.php' ?>
     </div>
 </body>
 </html>

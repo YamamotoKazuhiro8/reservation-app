@@ -1,3 +1,17 @@
+/* カレンダーCSS
+ * コンテナの大きさに収まるよう日付セルが伸縮
+    ┌─────────────────────────────┐
+    │       日付（例：7/15）       │
+    │ （満室・空き部屋数：3室空）   │
+    │     ┌──── タグ ─────┐       │
+    │     │ キャンプ（1日）│       │ ← 単日タグ
+    │     └───────────────┘       │
+    │ ┌──────────────────────────────────────┐
+    │ │     宿泊（7/15～7/17）                │ ← 複数日タグ（セルを横断） 
+    │ └──────────────────────────────────────┘
+    └────────────────────────────┘
+ */
+
 .hidden-label {
     position: absolute;
     left: -9999px;
@@ -5,44 +19,29 @@
 
 .calendar-container {
     padding: 0;
-    max-width: 990px;
     margin: 0 auto;
-    width: fit-content;
+    max-width: 880px;
+    width: 100%;      /* 画面サイズに合わせて縮む */
 }
 
-.calendar-header {
-    position: relative;
-    display : flex;
-    padding: 8px;
-    height: fit-content;
+#user-reservatins-list {}
+
+#user-reservatins-list.hidden {
+    display: none;
 }
 
-.controls {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.mode-select {
-    margin-left: auto;
-}
-.mode-select select {
-    padding: 4px;
-}
-
-/* #calendar-viewer {
-} */
-
-#month-viewer-container {
+#calendar-viewer {
     display: block;
+}
+#calendar-viewer .hidden{
+    display: none;
+}
+
+#month-viewer {
     /*widthはデバイスによる*/
     /*子要素を均等サイズで配置*/
-    width: 800px;
+    width: 100%;
     margin: auto;
-}
-
-#month-viewer-container.hidden {
-    display: none;
 }
 
 /**/
@@ -87,7 +86,7 @@
 
 /*日付*/
 .calendar-month td > div.head {
-    padding: 0.1rem 0;
+    padding: 0.1rem 0 0 0;
     text-align: center;
 }
 
@@ -99,8 +98,15 @@
     color: red;
 }
 
-/*予約可能日*/
-.calendar-month td > div.info.available {
+/*予約可能日 空きが少ない*/
+.calendar-month td > div.info.few {
+    text-decoration: underline;
+    color: yellow;
+    cursor: pointer;
+}
+
+/*予約可能日 空きが多い*/
+.calendar-month td > div.info.many {
     text-decoration: underline;
     color: green;
     cursor: pointer;
@@ -112,107 +118,9 @@
     border-bottom: 1px solid black;
 }
 
-
-
-
-
-#week-viewer-container {
-    display: block;
-}
-
-#week-viewer-container.hidden {
-    display: none;
-}
-
-.calendar-week {
-    overflow: auto;
-    border: 1px solid black;
-}
-
-.calendar-week table {
-    table-layout: fixed;
-    width: 100%;
-    border-collapse:separate;
-    border-spacing:0;
-}
-
-/*全セル*/
-.calendar-week th, .calendar-week td{
-    position: relative;
-    border-right: 1px solid black;
-    border-bottom: 1px solid black;
-    width: 10rem;
-    height: 3rem;
-    white-space: nowrap;
-    box-sizing: border-box;
-    text-align: center;
-}
-
-/*1列目*/
-.calendar-week tr th:first-of-type {
-    border-left: 1px solid black;
-    position: sticky;
-    left: 0;
-    background-color: white;
-    z-index: 9;
-}
-
-/*１行目*/
-.calendar-week tr:first-of-type th{
-    position: sticky;
-    top: 0;
-    background-color: white;
-    z-index: 9;
-}
-
-/*左上*/
-.calendar-week tr:first-of-type th:first-of-type {
-    position: sticky;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    background-color: white;
-}
-
-/*予約されたセル*/
-.calendar-week td[data-isVacancy="true"] {
-    cursor: pointer;
-    font-size: 0.8rem;
-    color: green;
-}
-
-.calendar-week td[data-isVacancy="false"] {
-    color: red;
-}
-
-.calendar-week td[data-isVacancy="true"]:hover{
-    background-color: #eee;
-}
-
-.reservation-label {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: floralwhite;
-    z-index: 5;
-    color: orange;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .sun { color: red; }
 .sat { color: blue; }
 .mute { color: #aaa; }
-
-/* .controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background-color: red;
-} */
 
 .btn {
     font-size: 1rem;

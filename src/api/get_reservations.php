@@ -11,9 +11,6 @@
     $startDate = $data['start_date'];
     $endDate = $data['end_date'];
 
-    // $startDate = '2025-05-01';
-    // $endDate = '2025-05-30';
-
     try {
         // SQLクエリの準備
         $stmt = $pdo->prepare("SELECT * FROM reservations WHERE end_date >= :start_date AND start_date <= :end_date");
@@ -22,12 +19,27 @@
         $stmt->execute();
         $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        foreach ($reservations as &$reservation) {
-            $reservation['user_id'] = ($isLogin && $reservation['user_id'] === $_SESSION['user_id']) ? 1 : 0;
-        }
-        unset($reservation);
+        $restructuredReservations = [];
 
-        echo json_encode(["status" => "success", "results" => $reservations]);
+        foreach ($reservations as $res) {
+            $entry = [
+                'start_date' => $res['start_date'],
+                'end_date'   => $res['end_date'],
+            ];
+
+            if ($isLogin && $res['user_id'] == $_SESSION['user_id']) {
+                $entry['is_user'] = true; // ユーザーの予約
+            }
+
+            $restructuredReservations[] = $entry;
+        }
+
+        $result = [
+            'status' => $isLogin ? 'user' : 'guest',
+            'reservations' => $restructuredReservations
+        ];
+
+        echo json_encode($result);
     } catch (PDOException $e) {
         echo json_encode(["status" => "error", "message" => "データベースエラー: " . $e->getMessage()]);
     }
