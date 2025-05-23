@@ -12,12 +12,16 @@
     └────────────────────────────┘
  */
 
+.hidden {
+    display: none;
+}
+
 .hidden-label {
     position: absolute;
     left: -9999px;
 }
 
-.calendar-container {
+.calendar-page-container {
     padding: 0;
     margin: 0 auto;
     max-width: 880px;
@@ -30,14 +34,7 @@
     display: none;
 }
 
-#calendar-viewer {
-    display: block;
-}
-#calendar-viewer .hidden{
-    display: none;
-}
-
-#month-viewer {
+#calendar-container {
     /*widthはデバイスによる*/
     /*子要素を均等サイズで配置*/
     width: 100%;

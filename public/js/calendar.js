@@ -1,154 +1,90 @@
 
-// 注意: ConfigはDBに移動させる
 // 要注意: カレンダー他の付きの日付せるID重複
 // 保留: createCalendarFragment()が毎回同じHTMLを返すが、reload時に破棄せず、tdの中身だけ破棄した方が効率的か
 // 次　: ラベル、
 // 次他: エラーぺージの表示
 	
-// 設定情報（期間・部屋情報）
-// 後々DBに移動
-class Config {
-    static numRooms = 9; // 部屋数
-    // static rooms = [2, 3, 4, 5, 6, 8, 9, 10, 11]; // 部屋番号
-    static year = 2025;
-    static startDate = new Date(`${this.year}-07-15`); // 予約期間開始日 
-    static endDate   = new Date(`${this.year}-09-15`); // 予約期間終了日
-}
+import {config} from './config';
 
-// 日付処理ユーティリティ（比較、差分、フォーマット）
-class DateUtils{
-    /**
-     * Date型の文字列を返す
-     * @param {Date} date 
-     * @returns {String} yy-mm-dd : mmは(1～12)
-     */
-    static dateString(date){
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
+import {ids} from './domIDs';
+import {dateString} from './dateUtils';
 
-    /**
-     * 文字列の日付を比較
-     * @param {String} a - 'yy-mm-dd' or 'mm-dd'
-     * @param {String} b
-     * @returns {Number} - a > b -> 1, a == b -> 0, a < b -> -1
-     */
-    static compare(a, b) {
-        const parse = (str) => {
-            const parts = str.split('-');
-            if (parts.length === 3) parts.shift(); // 年を除去
-            return parts.map(Number); // [mm, dd]
-        };
+import { Selection } from './selection';
 
-        const [am, ad] = parse(a);
-        const [bm, bd] = parse(b);
-
-        if (am !== bm) return am > bm ? 1 : -1;
-        if (ad !== bd) return ad > bd ? 1 : -1;
-        return 0;
-    }
-
-    /**
-     * a, bの日付の差（日数）を返す
-     * @param {string} a - 'yyyy-mm-dd' or 'mm-dd'
-     * @param {string} b
-     * @returns {number} - a - b の日数差（負値あり）
-     */
-    static diff(a, b){
-        const toDate = (str) => {
-            const parts = str.split('-').map(Number);
-            if(parts.length === 3) {
-                return new Date(parts[0], parts[1] - 1, parts[2]);
-            } else {
-                return new Date(Config.year, parts[0] - 1, parts[1]);
-            }
-        };
-        const dateA = toDate(a);
-        const dateB = toDate(b);
-        return Math.floor((dateA - dateB) / (1000 * 60 * 60 * 24));
-    }
-}
+const selection = new Selection();
 
 document.addEventListener('DOMContentLoaded', () => {
-    reload();
+    selection.add(ids.CALENDAR_LOADING);
+    selection.add(ids.CALENDAR_SERVER_ERROR)
+    selection.add(ids.CALENDAR_OUT_OF_PERIOD);
+    selection.add(ids.CALENDAR_CONTAINER);
+
+    reload(); // 初期読み込み
 })
 
-let isListOpen = false;
-function toggleList(){
-    // const ul = document.getElementById('user-reservatins-list').querySelector('ul');
-    // ul.className = isListOpen ? 'close' : 'open';
-    isListOpen = !isListOpen; 
-}
-
 async function reload() {
-    ['user-reservatins-list', 'server-error', 'outOfPeriod', `month-viewer`].forEach(elm => {elm.className = 'hidden'});
-    document.getElementById('loading').className = '';
+    selection.show(ids.CALENDAR_LOADING);
 
-    document.getElementById('user-reservatins-list').querySelector('ul').innerHTML = '';
-    document.getElementById('month-viewer').innerHTML = '';
+    document.getElementById(ids.USER_RESERVATION_LIST).querySelector('ul').innerHTML = '';
+    document.getElementById(ids.CALENDAR_CONTAINER).innerHTML = '';
 
-    try {
-        const data = await get_reservations();
-        if(data.status === 'error') throw new Error(data.message);
+    const data = await get_reservations(); // 予約データの取得
 
-        // 前処理
-        const isLogin = data.status === 'user'; 
-        const dayinfo = {}; // 日付ごとの予約数を記録
-        const userReservations = []; // ログインユーザーの予約のみ格納
-        data.reservations.forEach(reservation => {
-            if (isLogin && reservation.is_user === true) {
-                userReservations.push(reservation);
-            }
-            const start = new Date(reservation.start_date);
-            const end   = new Date(reservation.end_date);
-            for (let day = new Date(start); day <= end; day.setDate(day.getDate() + 1)) {
-                const dayString = `${day.getMonth()+1}-${day.getDate()}`;
-                dayinfo[dayString] = (dayinfo[dayString] || 0) + 1;
-            }
-        });
-
-        // カレンダー作成
-        document.getElementById('month-viewer').appendChild(createCalendarFragment(dayinfo, userReservations));
-        // ユーザー予約リスト作成
-        // document.getElementById('user-reservatins-list').querySelector('ul').appendChild(createList(userReservations));
-
-        document.getElementById('loading').className = 'hidden';
-        document.getElementById('month-viewer').className = '';
-        document.getElementById('user-reservatins-list').className = '';
-    } catch (error) {
-        console.error('データ取得エラー'+error.message);
-        // エラー画面の表示
-            // 接続エラー
-            // 読み込み失敗エラー
-            // 表示失敗エラー
-        document.getElementById('loading').className = 'hidden';
-        document.getElementById('server-error').className = '';
+    if(data.status === 'error') {
+        // エラー表示
+        selection.show(ids.CALENDAR_SERVER_ERROR);
+        return;
     }
+    // データ取得成功
+
+    // 前処理
+    const isLogin = data.status === 'user'; 
+    const dayinfo = {}; // 日付ごとの予約数を記録
+    const userReservations = []; // ログインユーザーの予約のみ格納
+    data.reservations.forEach(reservation => {
+        if (isLogin && reservation.is_user === true) {
+            userReservations.push(reservation);
+        }
+        const start = new Date(reservation.start_date);
+        const end   = new Date(reservation.end_date);
+        for (let day = new Date(start); day <= end; day.setDate(day.getDate() + 1)) {
+            const dayString = `${day.getMonth()+1}-${day.getDate()}`;
+            dayinfo[dayString] = (dayinfo[dayString] || 0) + 1;
+        }
+    });
+
+    // カレンダー作成
+    document.getElementById(ids.CALENDAR_CONTAINER).appendChild(createCalendarFragment(dayinfo, userReservations));
+    // ユーザー予約リスト作成
+    // document.getElementById('user-reservatins-list').querySelector('ul').appendChild(createList(userReservations));
+
+    // 表示
+    selection.show(ids.CALENDAR_CONTAINER);
 }
 
 /**
  * データベースから予約情報を取得する関数
- * @param {String} start_date - 開始日 (YYYY-MM-DD)
- * @param {string} end_date - 終了日 (YYYY-MM-DD)
  * @returns {Promise<Reservations[]>} 予約情報の配列（JSONオブジェクト）
  */
 async function get_reservations(){
-    const res = await fetch('../api/get_reservations.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            start_date: DateUtils.dateString(Config.startDate),
-            end_date:  DateUtils.dateString(Config.endDate)
-        })
-    });
+    try {
+        const res = await fetch('../api/get_reservations.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                start_date: dateString(config.startDate),
+                end_date:  dateString(config.endDate)
+            })
+        });
 
-    if(!res.ok) {
-        throw new Error(res.status);
+        if(!res.ok) {
+            throw new Error(`${res.statusText}`);
+        }
+
+        return await res.json(); 
+    } catch (error) {
+        return {status: 'error', message: error.message};
     }
-
-    return await res.json(); 
 }
 
 /*月カレンダーの作成*/
@@ -158,8 +94,8 @@ async function get_reservations(){
  */
 function createCalendarFragment(dayinfo, userReservations){
     const fragment = document.createDocumentFragment();
-    const firstMonth = Config.startDate.getMonth();
-    const lastMonth  = Config.endDate.getMonth();
+    const firstMonth = config.startDate.getMonth();
+    const lastMonth  = config.endDate.getMonth();
     for(let month = firstMonth; month <= lastMonth; month++){ // 予約期間内の全ての月
         fragment.appendChild(createMonthCalendarElement(month, dayinfo));
     }
@@ -208,9 +144,9 @@ function createMonthCalendarElement(month, dayinfo){
     {
         // 日セル
 
-        const lastMonth = new Date(Config.year, month - 1, 1).getMonth();
+        const lastMonth = new Date(config.year, month - 1, 1).getMonth();
         const nextMonth = new Date(Config.year, month + 1, 1).getMonth();
-        let day = new Date(Config.year, month, 1);
+        let day = new Date(config.year, month, 1);
         day.setDate(day.getDate() - day.getDay()); // カレンダーの最初の日
 
         for (let week = 0; week < 6; week++) {
@@ -238,7 +174,7 @@ function createMonthCalendarElement(month, dayinfo){
                     day_info.className = 'info';
 
                     // 空き状況
-                    const numRemain = Config.numRooms - (dayinfo[`${day.getMonth()+1}-${day.getDate()}`] || 0);
+                    const numRemain = config.numRooms - (dayinfo[`${day.getMonth()+1}-${day.getDate()}`] || 0);
                     if(numRemain <= 0) {
                         day_info.textContent = '満室';
                     } else {
