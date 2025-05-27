@@ -14,3 +14,11 @@
     <div id="outOfPeriod" class="hidden">期間外</div>
     <div id="calendar-container" class="hidden">月カレンダー</div>
 </div>
+
+<div id="reservation-footer-fixed">
+    予約について
+</div>
+
+<div id="reservation-footer-spacer">
+    予約について
+</div>

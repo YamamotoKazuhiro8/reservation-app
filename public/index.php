@@ -1,6 +1,6 @@
 <?php
     // index.php
-    include 'session.php';
+    require_once __DIR__ . '/../src/session.php';
 
     // 管理者ページに移動
     if ($isAdmin) {
@@ -24,7 +24,7 @@
         };
     </script>
     <script src="js/guide.js"></script>
-    <script src="js/calendar.js"></script>
+    <script type="module" src="js/calendar.js"></script>
 </head>
 <body>
     <!--ログイン状況 ヘッダーに表示-->

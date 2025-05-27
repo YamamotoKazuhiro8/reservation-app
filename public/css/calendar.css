@@ -41,78 +41,62 @@
     margin: auto;
 }
 
-/**/
-.calendar-month {
-    margin-bottom: 2rem;
-}
-
-.calendar-month table {
+#calendar table {
     width: 100%;
     border-collapse: collapse;
 }
 
-/*月カレンダーのタイトルラベル [８月]*/
-.calendar-month > div.title {
-    text-align: center;
-}
-
-/*曜日列*/
-.calendar-month tr:first-of-type {
-}
-
 /*曜日セル*/
-.calendar-month tr:first-of-type th {
+#calendar thead th {
     text-align: center;
     padding: 0.2rem auto;
     border: 1px solid #aaa;
     border-bottom: 1px solid #aaa;
 }
 
-/*infoセル*/
-.calendar-month tr:nth-child(2n) td {
+/*日セル*/
+#calendar tbody tr:nth-child(2n-1) td {
     border-right: 1px solid #aaa;
     border-left: 1px solid #aaa;
-}
-
-/*labelセル*/
-.calendar-month tr:nth-child(2n+1) td {
-    border-right: 1px solid #aaa;
-    border-left: 1px solid #aaa;
-    border-bottom: 1px solid #aaa;
 }
 
 /*日付*/
-.calendar-month td > div.head {
+#calendar tbody td > div:first-of-type {
     padding: 0.1rem 0 0 0;
     text-align: center;
 }
 
 /*日情報*/
-.calendar-month td > div.info {
+#calendar tbody td > div:not(:first-of-type) {
     padding: 0.4rem 0;
     text-align: center;
     font-size: 12px;
+    color: black;
+}
+
+#calendar tbody td > div:not(:first-of-type).zero {
     color: red;
 }
 
 /*予約可能日 空きが少ない*/
-.calendar-month td > div.info.few {
+#calendar tbody td > div:not(:first-of-type).few {
     text-decoration: underline;
-    color: yellow;
+    color: #FFC107;
     cursor: pointer;
 }
 
 /*予約可能日 空きが多い*/
-.calendar-month td > div.info.many {
+#calendar tbody td > div:not(:first-of-type).many {
     text-decoration: underline;
     color: green;
     cursor: pointer;
 }
 
-/*日を、跨ぐラベル欄*/
-.calendar-month td.label {
-    height: 0;
-    border-bottom: 1px solid black;
+/*labelセル*/
+#calendar tbody tr:nth-child(2n) td {
+    border-right: 1px solid #aaa;
+    border-left: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
 }
 
 .sun { color: red; }

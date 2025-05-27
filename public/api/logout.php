@@ -1,6 +1,6 @@
 <?php
     // logout.php
-    require '../session.php';
+    include __DIR__ . '/../../src/session.php';
 
     // $_SESSION = [];
     // if (ini_get("session.use_cookies")) {

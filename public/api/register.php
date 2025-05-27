@@ -1,8 +1,8 @@
 <?php
     // register.php
-
-    require '../db_connect.php';
-    include '../session.php';
+    
+    require __DIR__ . '/../../src/db_connect.php';
+    include __DIR__ . '/../../src/session.php';
 
     $inputData = file_get_contents('php://input');
     $data = json_decode($inputData, true); 

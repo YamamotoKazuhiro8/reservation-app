@@ -1,8 +1,8 @@
 <?php
     // 予約情報の取得
     // ログイン中の場合、自分の予約にフラグ付
-    require '../db_connect.php';
-    include '../session.php';
+    require __DIR__ . '/../../src/db_connect.php';
+    include __DIR__ . '/../../src/session.php';
 
     header('Content-Type: application/json');
 

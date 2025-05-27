@@ -4,12 +4,12 @@
 // 次　: ラベル、
 // 次他: エラーぺージの表示
 	
-import {config} from './config';
+import {config} from './config.js';
 
-import {ids} from './domIDs';
-import {dateString} from './dateUtils';
+import {ids} from './domIDs.js';
+import {dateString} from './dateUtils.js';
 
-import { Selection } from './selection';
+import { Selection } from './selection.js';
 
 const selection = new Selection();
 
@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 async function reload() {
+    console.log('reload');
     selection.show(ids.CALENDAR_LOADING);
 
     document.getElementById(ids.USER_RESERVATION_LIST).querySelector('ul').innerHTML = '';
@@ -54,7 +55,8 @@ async function reload() {
     });
 
     // カレンダー作成
-    document.getElementById(ids.CALENDAR_CONTAINER).appendChild(createCalendarFragment(dayinfo, userReservations));
+    // document.getElementById(ids.CALENDAR_CONTAINER).appendChild(createCalendarFragment(dayinfo, userReservations));
+    document.getElementById(ids.CALENDAR_CONTAINER).appendChild(createCalendar(dayinfo, userReservations));
     // ユーザー予約リスト作成
     // document.getElementById('user-reservatins-list').querySelector('ul').appendChild(createList(userReservations));
 
@@ -68,7 +70,7 @@ async function reload() {
  */
 async function get_reservations(){
     try {
-        const res = await fetch('../api/get_reservations.php', {
+        const res = await fetch('api/get_reservations.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -87,6 +89,89 @@ async function get_reservations(){
     }
 }
 
+
+//---------------------------------------------------
+
+function createCalendar(dayinfo, userReservations) {
+    const div = document.createElement('div');
+    div.id = 'calendar';
+
+    const table = document.createElement('table');
+    div.appendChild(table);
+
+    // 曜日列
+    const thead = document.createElement('thead'); 
+    table.appendChild(thead);
+    const tr = document.createElement('tr');
+    thead.appendChild(tr);
+    ["日","月","火","水","木","金","土"].forEach(weekday => {
+        const th = document.createElement('th');
+        th.className = weekday === '日' ? 'sun' : weekday === '土' ? 'sat' : '';
+        th.textContent = weekday;
+        tr.appendChild(th);
+    });
+
+    const tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+
+    // 日セル
+    const firstMonth = config.startDate.getMonth(); // 最初の月
+    const lastMonth  = config.endDate.getMonth();   // 最後の月
+
+    let day = new Date(config.year, firstMonth, 1);
+    day.setDate(day.getDate() - day.getDay());      // カレンダーに描画される初日
+    
+    const lastDay = new Date(config.year, lastMonth + 1, 0);
+    lastDay.setDate(lastDay.getDate() + (6 - lastDay.getDay())); // カレンダーの最終日
+
+    while(day < lastDay) {
+        console.log('week');
+        const tr_day = document.createElement('tr');
+        const tr_label = document.createElement('tr');
+        tbody.appendChild(tr_day);
+        tbody.appendChild(tr_label);
+        ['sun','','','','','','sat'].forEach((weekday) => {
+            { // 日付行
+                const td = document.createElement('td');
+                tr_day.appendChild(td);
+
+                const num = document.createElement('div'); // 日付
+                td.appendChild(num);
+                num.className = weekday;
+                num.textContent = `${day.getMonth() + 1}/${day.getDate()}`; // day.getDate() === 1 ? `${day.getMonth()}/${day.getDate()}`: day.getDate();
+
+                const info = document.createElement('div'); // 日の予約情報
+                td.appendChild(info);
+                if(day < config.startDate || day > config.endDate) {
+                    info.textContent = 'ー';
+                } else {
+                    // 空き状況
+                    const numRemain = config.numRooms - (dayinfo[`${day.getMonth()+1}-${day.getDate()}`] || 0);
+                    if(numRemain <= 0) {
+                        info.textContent = '満室';
+                        info.classList.add('zero');
+                    } else {
+                        info.textContent = `空きあり(${numRemain})`;
+                        if(numRemain > 3) info.classList.add('many');
+                        else              info.classList.add('few');
+                    }
+                }
+            }
+
+            { // label行
+                const td = document.createElement('td');
+                tr_label.appendChild(td);
+            }
+
+            day.setDate(day.getDate() + 1);
+        });
+    }
+
+    return div;
+}
+
+
+
 /*月カレンダーの作成*/
 /**
  * 
@@ -103,7 +188,9 @@ function createCalendarFragment(dayinfo, userReservations){
 }
 
 // 日tdにイベントリスナー追加
-function addDayEventListener(td){}
+function addDayEventListener(td){
+
+}
 
 /**
  * 月テーブルの作成
@@ -145,7 +232,7 @@ function createMonthCalendarElement(month, dayinfo){
         // 日セル
 
         const lastMonth = new Date(config.year, month - 1, 1).getMonth();
-        const nextMonth = new Date(Config.year, month + 1, 1).getMonth();
+        const nextMonth = new Date(config.year, month + 1, 1).getMonth();
         let day = new Date(config.year, month, 1);
         day.setDate(day.getDate() - day.getDay()); // カレンダーの最初の日
 
