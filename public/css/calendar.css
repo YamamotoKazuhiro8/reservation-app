@@ -1,119 +1,69 @@
-/* カレンダーCSS
- * コンテナの大きさに収まるよう日付セルが伸縮
-    ┌─────────────────────────────┐
-    │       日付（例：7/15）       │
-    │ （満室・空き部屋数：3室空）   │
-    │     ┌──── タグ ─────┐       │
-    │     │ キャンプ（1日）│       │ ← 単日タグ
-    │     └───────────────┘       │
-    │ ┌──────────────────────────────────────┐
-    │ │     宿泊（7/15～7/17）                │ ← 複数日タグ（セルを横断） 
-    │ └──────────────────────────────────────┘
-    └────────────────────────────┘
- */
-
-.hidden {
-    display: none;
-}
-
-.hidden-label {
-    position: absolute;
-    left: -9999px;
-}
-
-.calendar-page-container {
-    padding: 0;
-    margin: 0 auto;
-    max-width: 880px;
-    width: 100%;      /* 画面サイズに合わせて縮む */
-}
-
-#user-reservatins-list {}
-
-#user-reservatins-list.hidden {
-    display: none;
-}
 
 #calendar-container {
-    /*widthはデバイスによる*/
-    /*子要素を均等サイズで配置*/
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox用 */
+    -ms-overflow-style: none; /* IE10+ */
+
     width: 100%;
-    margin: auto;
+    height: 50vh;
+
+    padding: 1px;
+    box-sizing: border-box;
 }
 
-#calendar table {
+#calendar-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari用 */
+}
+
+#calendar-container table {
+    position: relative;
+    border-spacing: 0;
     width: 100%;
-    border-collapse: collapse;
+    overflow: visible;
 }
 
-/*曜日セル*/
-#calendar thead th {
-    text-align: center;
-    padding: 0.2rem auto;
-    border: 1px solid #aaa;
-    border-bottom: 1px solid #aaa;
+#calendar-container table thead {
 }
 
-/*日セル*/
-#calendar tbody tr:nth-child(2n-1) td {
-    border-right: 1px solid #aaa;
-    border-left: 1px solid #aaa;
+#calendar-container table thead th {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 5;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
 }
 
-/*日付*/
-#calendar tbody td > div:first-of-type {
-    padding: 0.1rem 0 0 0;
-    text-align: center;
+#calendar-container table thead th:last-of-type {
+    border-right: 1px solid black;
 }
 
-/*日情報*/
-#calendar tbody td > div:not(:first-of-type) {
-    padding: 0.4rem 0;
-    text-align: center;
-    font-size: 12px;
-    color: black;
+#calendar-container table tbody td {
+    background-color: white;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
 }
 
-#calendar tbody td > div:not(:first-of-type).zero {
-    color: red;
+#calendar-container table tbody td:last-of-type {
+    border-right: 1px solid black;
 }
 
-/*予約可能日 空きが少ない*/
-#calendar tbody td > div:not(:first-of-type).few {
-    text-decoration: underline;
-    color: #FFC107;
-    cursor: pointer;
+/* 日付 */
+#calendar-container table tbody td div:nth-child(1){
 }
 
-/*予約可能日 空きが多い*/
-#calendar tbody td > div:not(:first-of-type).many {
-    text-decoration: underline;
-    color: green;
-    cursor: pointer;
+/* 日情報 */
+#calendar-container table tbody td div:nth-child(2){
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 0.8rem;
 }
 
-/*labelセル*/
-#calendar tbody tr:nth-child(2n) td {
-    border-right: 1px solid #aaa;
-    border-left: 1px solid #aaa;
-    border-bottom: 1px solid #aaa;
+/* 予約ラベル */
+#calendar-container table tbody td div:nth-child(3){
 }
 
 .sun { color: red; }
 .sat { color: blue; }
 .mute { color: #aaa; }
-
-.btn {
-    font-size: 1rem;
-    color: #111;
-    background-color: white;
-    border: 1px solid black;
-    border-radius: 6px;
-    /* white-space: nowrap; */
-}
-.btn:hover {
-    background-color: #eee;   
-}
-.btn:focus {
-    outline: none;
-}
