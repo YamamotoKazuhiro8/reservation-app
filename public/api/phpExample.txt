@@ -1,0 +1,80 @@
+
+// JavaScriptでGetの送信法 
+const data = '内容';
+const res = await fetch(`api/get.php?date=${encodeURIComponent(date)}`);
+
+// PHP:Getの受け取り方
+<?php
+if (isset($_GET['date'])) {
+    $date = $_GET['date'];
+} else {
+    http_response_code(400);
+    echo json_encode(['error' => 'date parameter is required']);
+}
+?>
+
+// JavaScriptでPostの送信法
+const res = await fetch('../api/get_booking.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ date: '2025-06-01' })
+});
+
+// PHP:Postの受け取り方
+<?php
+$input = json_decode(file_get_contents('php://input'), true);
+
+if (isset($input['date'])) {
+    $date = $input['date'];
+} else {
+    http_response_code(400);
+    echo json_encode(['error' => 'date is missing']);
+}
+?>
+
+// PHP:配列からObject
+$arr = ['name' => '次郎', 'age' => 40];
+$obj = (object)$arr;
+echo $obj->name;  // 次郎
+
+// PHP:JsonからObject
+$json = '{"name": "三郎", "age": 22}'; // Jsonの書き方
+$obj = json_decode($json); // 第二引数 false で object
+echo $obj->name; // 三郎
+
+// PHP:配列
+$arr = [
+    'name' => '次郎',
+    'age' => 40
+];
+echo $arr['name']; // 次郎
+echo $arr['age'];  // 40
+
+// PHP:配列
+$indexed = ['りんご', 'みかん']; // 数値添字配列
+echo $indexed[0]; // りんご
+
+// PHP:配列の応用
+$users = [
+    ['name' => '太郎', 'age' => 25],
+    ['name' => '花子', 'age' => 30],
+];
+echo $users[0]['name']; // 太郎
+
+// JavaScript:Object
+const person = {
+    name: "太郎",
+    age: 25,
+    greet: function() {
+        console.log("こんにちは！");
+    }
+};
+
+// Jsonのデコード
+$json = '{"name":"次郎","age":40}';
+
+$obj = json_decode($json);       // stdClass オブジェクトになる
+echo $obj->name;                 // 次郎
+
+$arr = json_decode($json, true); // 連想配列になる
+echo $arr['name'];               // 次郎

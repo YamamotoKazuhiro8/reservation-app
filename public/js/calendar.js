@@ -159,4 +159,5 @@ function reload() {
 
 // 予約データの取得
 async function getReservations() {
+    const res = await fetch('../api/get_booking.php');
 }
